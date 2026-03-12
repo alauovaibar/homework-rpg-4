@@ -11,6 +11,6 @@ public class AreaSkill extends Skill {
     public void cast(CombatNode target) {
         int damage = resolvedDamage();
         System.out.println("   [Skill] AOE " + getSkillName() + " (" + getEffectName() + ") strikes " + target.getName() + " group for " + damage + " total.");
-        target.takeDamage(damage);
+        target.takeDamage(damage);//
     }
 }

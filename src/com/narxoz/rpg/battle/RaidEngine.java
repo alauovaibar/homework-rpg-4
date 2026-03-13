@@ -2,7 +2,6 @@ package com.narxoz.rpg.battle;
 
 import com.narxoz.rpg.bridge.Skill;
 import com.narxoz.rpg.composite.CombatNode;
-
 import java.util.Random;
 
 public class RaidEngine {
@@ -13,21 +12,31 @@ public class RaidEngine {
         return this;
     }
 
-    public RaidResult runRaid(CombatNode teamA, CombatNode teamB, Skill teamASkill, Skill teamBSkill) {
-        // TODO: Validate inputs (null checks, alive checks, required skills).
-        // TODO: Implement round-based simulation:
-        // 1) Team A casts on Team B
-        // 2) Team B casts on Team A (if still alive)
-        // 3) Track rounds and log each step
-        // 4) Stop when one team is defeated (or max rounds reached)
-        //
-        // Optional extension:
-        // Use random for critical strikes or other deterministic events.
-        // Example: boolean critA = random.nextInt(100) < 10;
+    public RaidResult runRaid(CombatNode teamA, CombatNode teamB, Skill skillA, Skill skillB) {
         RaidResult result = new RaidResult();
-        result.setRounds(0);
-        result.setWinner("TBD");
-        result.addLine("TODO: implement raid simulation");
+        int round = 1;
+        int maxRounds = 20;
+
+        while (round <= maxRounds && teamA.isAlive() && teamB.isAlive()) {
+            result.addLine("--- Round " + round + " ---");
+
+            result.addLine(teamA.getName() + " uses " + skillA.getSkillName() + " on " + teamB.getName());
+            skillA.cast(teamB);
+
+            if (teamB.isAlive()) {
+                result.addLine(teamB.getName() + " uses " + skillB.getSkillName() + " on " + teamA.getName());
+                skillB.cast(teamA);
+            }
+
+            result.addLine(teamA.getName() + " HP: " + teamA.getHealth() + " | " + teamB.getName() + " HP: " + teamB.getHealth());
+            round++;
+        }
+
+        result.setRounds(round - 1);
+        if (!teamA.isAlive() && !teamB.isAlive()) result.setWinner("Draw");
+        else if (teamA.isAlive()) result.setWinner(teamA.getName());
+        else result.setWinner(teamB.getName());
+
         return result;
     }
 }
